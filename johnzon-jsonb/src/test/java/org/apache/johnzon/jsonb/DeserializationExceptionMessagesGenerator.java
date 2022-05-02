@@ -82,7 +82,7 @@ public class DeserializationExceptionMessagesGenerator {
     }
 
     public static String escape(final String string) {
-        return string.replace("\"", "\\\"");
+        return string.replace("\"", "\\\"").replace("\n", "\\n");
     }
 
 
@@ -181,6 +181,10 @@ public class DeserializationExceptionMessagesGenerator {
             if (this == arrayOfNull) return field.isArrayOfPrimitive();
             if (field == arrayOfInt && this == arrayOfNumber) return false;
             if (field == arrayOfBooleanPrimitive && this == arrayOfBoolean) return false;
+            if (field == listOfBoolean && this == arrayOfBoolean) return false;
+            if (field == listOfObject && this == arrayOfObject) return false;
+            if (field == listOfString && this == arrayOfString) return false;
+            if (field == listOfNumber && this == arrayOfNumber) return false;
             if (field == string) {
                 switch (this) {
                     case object:
