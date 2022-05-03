@@ -30,6 +30,7 @@ import java.util.stream.Stream;
 
 import static org.apache.johnzon.jsonb.DeserializationExceptionMessagesTest.getExceptionMessage;
 
+//CHECKSTYLE:OFF
 public class DeserializationExceptionMessagesGenerator {
 
     public static void main(String[] args) throws IOException {
@@ -101,6 +102,12 @@ public class DeserializationExceptionMessagesGenerator {
         arrayOfNumber("arrayOfNumber", "Number[]", "[2, 3, 5, 7, 11, 13, 17, 19, 23, 29]"),
         arrayOfBoolean("arrayOfBoolean", "Boolean[]", "[true,false,true,true,false]"),
         arrayOfInt("arrayOfInt", "Number[]", null),
+        arrayOfByte("arrayOfByte", "Number[]", null),
+        arrayOfChar("arrayOfChar", "Number[]", null),
+        arrayOfShort("arrayOfShort", "Number[]", null),
+        arrayOfLong("arrayOfLong", "Number[]", null),
+        arrayOfFloat("arrayOfFloat", "Number[]", null),
+        arrayOfDouble("arrayOfDouble", "Number[]", null),
         arrayOfBooleanPrimitive("arrayOfBooleanPrimitive", "Boolean[]", null),
         arrayOfNull("arrayOfNull", "null", "[null,null,null,null,null,null]"),
         listOfObject("listOfObject", "Object[]", null),
@@ -116,10 +123,6 @@ public class DeserializationExceptionMessagesGenerator {
         private final Field field;
 
         Item(final String fieldName, final String javaType, final String json) {
-            this(fieldName, javaType, json, true, true);
-        }
-
-        Item(final String fieldName, final String javaType, final String json, final boolean isField, final boolean testInput) {
             this.name = getName(fieldName);
             this.fieldName = fieldName;
             this.javaType = javaType;
@@ -150,12 +153,8 @@ public class DeserializationExceptionMessagesGenerator {
             return fieldName;
         }
 
-        public String getJavaType() {
-            return javaType;
-        }
-
         public String getJson() {
-            if ("string".equalsIgnoreCase(javaType)) {
+            if (field != null && field.getType().equals(String.class)) {
                 return "\"" + json + "\"";
             }
             return json;
@@ -179,6 +178,19 @@ public class DeserializationExceptionMessagesGenerator {
             if (this == boolPrimitive && field == bool) return false;
             if (this == bool && field == boolPrimitive) return false;
             if (this == arrayOfNull) return field.isArrayOfPrimitive();
+            if (this == arrayOfString && field == arrayOfChar) return false;
+            if (this == arrayOfNumber) {
+                switch (field){
+                    case arrayOfInt:
+                    case arrayOfChar:
+                    case arrayOfByte:
+                    case arrayOfShort:
+                    case arrayOfLong:
+                    case arrayOfFloat:
+                    case arrayOfDouble:
+                        return false;
+                }
+            }
             if (field == arrayOfInt && this == arrayOfNumber) return false;
             if (field == arrayOfBooleanPrimitive && this == arrayOfBoolean) return false;
             if (field == listOfBoolean && this == arrayOfBoolean) return false;
@@ -210,3 +222,4 @@ public class DeserializationExceptionMessagesGenerator {
         }
     }
 }
+//CHECKSTYLE:ON
